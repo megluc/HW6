@@ -1,7 +1,8 @@
 
+
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Meghan Garcia  / SECTION 002
  *
  *   This java file contains the problem solutions for the methods lastBoulder,
  *   showDuplicates, and pair methods. You should utilize the Java Collection
@@ -11,6 +12,8 @@
 
 import java.util.*;
 import java.util.PriorityQueue;
+
+
 
 public class ProblemSolutions {
 
@@ -63,13 +66,30 @@ public class ProblemSolutions {
      * returning the 0 if queue is empty else return pq.peek().
      */
 
-  public static int lastBoulder(int[] boulders) {
+    public static int lastBoulder(int[] boulders) {
+        // creates a max-heap using PriorityQueue by reverse order to get largest element first
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
 
-      //
-      // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME / SECTION # ABOVE
-      //
-      return -1;
-  }
+        // Add all boulders to the max-heap
+        for (int boulder : boulders) {
+            maxHeap.offer(boulder);
+        }
+
+        // continues to smash boulders until one is left
+        while (maxHeap.size() > 1) {
+            // poll the two largest boulders
+            int first = maxHeap.poll();
+            int second = maxHeap.poll();
+
+            // If the boulders have different weights, add the difference back to the heap
+            if (first != second) {
+                maxHeap.offer(first - second);
+            }
+        }
+
+        // If there are no boulders left returns empty or 0; otherwise return last boulder
+        return maxHeap.isEmpty() ? 0 : maxHeap.poll();
+    }
 
 
     /**
@@ -90,11 +110,29 @@ public class ProblemSolutions {
      */
 
     public static ArrayList<String> showDuplicates(ArrayList<String> input) {
+        // creates a map to store the count of each string
+        Map<String, Integer> countMap = new HashMap<>();
 
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure result is sorted in ascending order
+        // Loop through the list and then updates map
+        for (String s : input) {
+            countMap.put(s, countMap.getOrDefault(s, 0) + 1);
+        }
+
+        // creates a list to store strings that appear more than once
+        List<String> duplicates = new ArrayList<>();
+
+        // Loop through the map to find strings that have a count greater than 1
+        for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > 1) {
+                duplicates.add(entry.getKey());
+            }
+        }
+
+        // Sort the duplicates in ascneding order
+        duplicates.sort(String::compareTo);
+
+        // returns the sorted list of duplicates
+        return new ArrayList<>(duplicates);
 
     }
 
@@ -130,10 +168,29 @@ public class ProblemSolutions {
      */
 
     public static ArrayList<String> pair(int[] input, int k) {
+        //creates a list to store the result pairs
+        ArrayList<String> countMap = new ArrayList<>();
+        // creates a set to track the numbers seen
+        HashSet<Integer> seenNumbers = new HashSet<>();
 
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure returned lists is sorted as indicated above
+        // iterates over input array
+        for (int n : input) {
+            int complement = k - n;
+            if (seenNumbers.contains(complement)) { //calculate the complement which sums up to value k
+
+                String pair = n < complement ? "(" + n + ", " + complement + ")" : "(" + complement + ", " + n + ")";
+                // no duplicate pairs added more than once
+                if (!countMap.contains(pair)) {
+                    countMap.add(pair);
+                }
+            }
+            // Add current number to the set for comparisons if needed
+            seenNumbers.add(n);
+        }
+
+        // Sort the result lexicographically
+        Collections.sort(countMap);
+        // Return the sorted list of pairs
+        return countMap;
     }
 }
